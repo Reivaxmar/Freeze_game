@@ -19,9 +19,17 @@ def main():
         if frozen and whoFroze == curTurn:
             break
         # Do the turn of the current player
-        frozen = max(players[curTurn].doTurn(deck, frozen), frozen)
+        frozen_val, info = players[curTurn].doTurn(deck, frozen)
+        frozen = max(frozen_val, frozen)
         if frozen and whoFroze == -1:
             whoFroze = curTurn
+        # Check for Q (show card)
+        if info.rank == 12:
+            pl, idx = players[curTurn].askShow()
+            players[curTurn].tellShow(players[pl].getCard(idx))
+        # Check for J (swap cards)
+        if info.rank == 11:
+            exit(-1)
         # Make all the players check for discards on that last discarded
         for player in players:
             player.checkDiscards(deck.getTopDiscard(), deck)
